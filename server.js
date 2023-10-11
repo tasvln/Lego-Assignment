@@ -39,13 +39,13 @@ app.get('/lego/sets', (req, res) => {
     legoData.getSetsByTheme(theme).then((data) => {
       res.json(data);
     }).catch((err) => {
-      res.status(404).json({ message: err });
+      res.status(404).send(`404 - ${err}`)
     });
   } else {
     legoData.getAllSets().then((data) => {
       res.json(data);
     }).catch((err) => {
-      res.status(404).json({ message: err });
+      res.status(404).send(`404 - ${err}`)
     });
   }
 });
@@ -57,7 +57,7 @@ app.get('/lego/sets/:id', (req, res) => {
   legoData.getSetByNum(setNum).then((data) => {
     res.json(data);
   }).catch((err) => {
-    res.status(404).json({ message: err });
+    res.status(404).send(`404 - ${err}`)
   });
 });
 
