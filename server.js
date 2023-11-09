@@ -1,12 +1,12 @@
 /********************************************************************************
-* WEB322 – Assignment 02
+* WEB322 – Assignment 03
 *
 * I declare that this assignment is my own work in accordance with Seneca's
 * Academic Integrity Policy:
 *
 * https://www.senecacollege.ca/about/policies/academic-integrity-policy.html
 *
-* Name: Temitope Adebayo Student Student ID: 144000205 Date: 2023-10-10
+* Name: Temitope Adebayo Student Student ID: 144000205 Date: 2023-11-09
 *
 * Published URL: https://curious-fedora-toad.cyclic.cloud/
 *
@@ -17,18 +17,23 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-app.use(express.static('public')); // set static folder
+// set static folder
+app.use(express.static('public'));
 
-const HTTP_PORT = process.env.PORT || 8080; // set port
+// set view engine
+app.set('view engine', 'ejs');
+
+// set port
+const HTTP_PORT = process.env.PORT || 8080;
 
 // get "/"
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '/views/home.html'));
+  res.render('home');
 });
 
 // get "/"
 app.get('/about', (req, res) => {
-  res.sendFile(path.join(__dirname, '/views/about.html'));
+  res.render('about');
 });
 
 // get "/lego/sets" to return all sets
@@ -37,15 +42,15 @@ app.get('/lego/sets', (req, res) => {
 
   if (theme) {
     legoData.getSetsByTheme(theme).then((data) => {
-      res.json(data);
+      res.render('sets', { sets: data });
     }).catch((err) => {
-      res.status(404).send(`404 - ${err}`)
+      res.status(404).render("404", {message: "Unable to find requested sets."});
     });
   } else {
     legoData.getAllSets().then((data) => {
-      res.json(data);
+      res.render('sets', { sets: data });
     }).catch((err) => {
-      res.status(404).send(`404 - ${err}`)
+      res.status(404).render("404", {message: "Unable to find requested sets."});
     });
   }
 });
@@ -55,15 +60,15 @@ app.get('/lego/sets/:id', (req, res) => {
   const setNum = req.params.id;
 
   legoData.getSetByNum(setNum).then((data) => {
-    res.json(data);
+    res.render('set', { set: data });
   }).catch((err) => {
-    res.status(404).send(`404 - ${err}`)
+    res.status(404).render("404", {message: "Unable to find requested set."});
   });
 });
 
 // 404 error
 app.use((req, res) => {
-  res.status(404).sendFile(path.join(__dirname, '/views/404.html'));
+  res.status(404).render("404", { message: "I'm sorry, we're unable to find what you're looking for" });
 });
 
 // call initialize function in legoData module
