@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/main.css" />
+  <title>Lego Collection</title>
+</head>
+<body>
+  <!-- Navbar -->
+  <%- include('partials/navbar', {page: '/add'}) %>
+  <div class="max-w-lg mx-auto rounded-lg mt-10">
+    <p class="text-center text-2xl font-bold">New Set</p>
+    <form class="flex flex-col gap-2 mt-4">
+      <div class="flex flex-col gap-2">
+        <label for="name" class="text-sm font-bold">Name:</label>
+        <input 
+          type="text" 
+          id="name"
+          name="name"
+          placeholder="Enter Set Name" 
+          class="input input-bordered input-md w-full"
+          required
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="year" class="text-sm font-bold">Year:</label>
+        <input 
+          type="number" 
+          id="year"
+          name="year"
+          placeholder="Enter Year Released" 
+          class="input input-bordered input-md w-full"
+          required
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="numparts" class="text-sm font-bold">Parts:</label>
+        <input 
+          type="number" 
+          id="numparts"
+          name="numparts"
+          placeholder="Enter Number of Parts" 
+          class="input input-bordered input-md w-full"
+          required
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="imgurl" class="text-sm font-bold">Image URL:</label>
+        <input 
+          type="text" 
+          id="imgurl"
+          name="imgurl"
+          placeholder="http://example.com/image.jpg" 
+          class="input input-bordered input-md w-full"
+          required
+        />
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="themeid" class="text-sm font-bold">Theme:</label>
+        <select
+          id="themeid"
+          name="themeid"
+          class="select select-bordered w-full"
+          required
+        >
+          <option disabled selected>Select Theme</option>
+          <% themes.forEach(theme => { %>
+            <option value="<%= theme.id %>"><%= theme.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      <div class="flex flex-col gap-2">
+        <label for="setnum" class="text-sm font-bold">Set Number:</label>
+        <input 
+          type="text" 
+          id="setnum"
+          name="setnum"
+          placeholder="Enter Set Number" 
+          class="input input-bordered input-md w-full"
+          required
+        />
+      </div>
+      <div class=" mt-6">
+        <button class="btn btn-primary w-full" type="submit">Add Set</button>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

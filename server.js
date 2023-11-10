@@ -67,6 +67,22 @@ app.get('/lego/sets/:id', (req, res) => {
   });
 });
 
+app.get('/lego/addSet', (req, res) => {
+  legoData.getAllThemes().then((data) => {
+    res.render('addSet', { themes: data });
+  }).catch((err) => {
+    res.status(500).render("500", { message: `I'm sorry, but we have encountered the following error: ${err}` });
+  });
+});
+
+app.post('/lego/addSet', (req, res) => {
+  legoData.addSet(req.body).then((data) => {
+    res.redirect('/lego/sets');
+  }).catch((err) => {
+    res.status(500).render("500", { message: `I'm sorry, but we have encountered the following error: ${err}` });
+  });
+});
+
 // 404 error
 app.use((req, res) => {
   res.status(404).render("404", { message: "I'm sorry, we're unable to find what you're looking for" });
