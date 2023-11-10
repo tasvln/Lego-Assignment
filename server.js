@@ -1,5 +1,5 @@
 /********************************************************************************
-* WEB322 – Assignment 04
+* WEB322 – Assignment 05
 *
 * I declare that this assignment is my own work in accordance with Seneca's
 * Academic Integrity Policy:
@@ -12,10 +12,12 @@
 *
 ********************************************************************************/
 
+require('dotenv').config();
 const legoData = require("./modules/legoSets");
 const express = require('express');
 const path = require('path');
 const app = express();
+const Sequelize = require('sequelize');
 
 // set static folder
 app.use(express.static('public'));
@@ -70,6 +72,54 @@ app.get('/lego/sets/:id', (req, res) => {
 app.use((req, res) => {
   res.status(404).render("404", { message: "I'm sorry, we're unable to find what you're looking for" });
 });
+
+// initialize sequelize
+let db = process.env.PGDATABASE;
+let host = process.env.PGHOST;
+let user = process.env.PGUSER;
+let password = process.env.PGPASSWORD;
+
+let sequelize = new Sequelize(db, user, password, {
+  host: host,
+  dialect: 'postgres',
+  port: 5432,
+  dialectOptions: {
+    ssl: { rejectUnauthorized: false },
+  },
+});
+
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log('Connection has been established successfully.');
+  })
+  .catch((err) => {
+    console.log('Unable to connect to the database:', err);
+  });
+
+const Theme = sequelize.define('Theme', {
+  id: {
+    type: Sequelize.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: Sequelize.STRING,
+});
+
+const Set = sequelize.define('Set', {
+  set_num: {
+    Sequelize.STRING,
+    primaryKey: true,
+  },
+  name: Sequelize.STRING,
+  year: Sequelize.INTEGER,
+  theme_id: Sequelize.INTEGER,
+  num_parts: Sequelize.INTEGER,
+  theme_id: Sequelize.INTEGER,
+  img_url: Sequelize.STRING,
+});
+
+Set.belongsTo(Theme, { foreignKey: 'theme_id' });
 
 // call initialize function in legoData module
 legoData.initialize().then(() => {
