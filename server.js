@@ -24,6 +24,9 @@ app.use(express.static('public'));
 // set view engine
 app.set('view engine', 'ejs');
 
+// urlencoded middleware
+app.use(express.urlencoded({ extended: true }));
+
 // set port
 const HTTP_PORT = process.env.PORT || 8080;
 
@@ -67,19 +70,57 @@ app.get('/lego/sets/:id', (req, res) => {
   });
 });
 
+// get "/lego/addSet" to return a form to add a set
 app.get('/lego/addSet', (req, res) => {
   legoData.getAllThemes().then((data) => {
     res.render('addSet', { themes: data });
   }).catch((err) => {
-    res.status(500).render("500", { message: `I'm sorry, but we have encountered the following error: ${err}` });
+    res.render("500", { message: `I'm sorry, but we have encountered the following error: ${err}` });
   });
 });
 
+// post "/lego/addSet" to add a set
 app.post('/lego/addSet', (req, res) => {
-  legoData.addSet(req.body).then((data) => {
+  console.log(req.body);
+  legoData.addSet(req.body).then(() => {
     res.redirect('/lego/sets');
   }).catch((err) => {
-    res.status(500).render("500", { message: `I'm sorry, but we have encountered the following error: ${err}` });
+    res.render("500", { message: `I'm sorry, but we have encountered the following error: ${err}` });
+  });
+});
+
+// get "/lego/editSet/:id" to return a form to edit a set
+app.get('/lego/editSet/:num', (req, res) => {
+  const setNum = req.params.num;
+
+  legoData.getSetByNum(setNum).then((data) => {
+    legoData.getAllThemes().then((themes) => {
+      res.render('editSet', { set: data, themes: themes });
+    }).catch((err) => {
+      res.render("500", { message: `I'm sorry, but we have encountered the following error: ${err}` });
+    });
+  }).catch((err) => {
+    res.status(404).render("404", {message: "Unable to find requested set."});
+  });
+});
+
+// post "/lego/editSet" to edit a set
+app.post('/lego/editSet', (req, res) => {
+  legoData.editSet(req.body).then(() => {
+    res.redirect('/lego/sets');
+  }).catch((err) => {
+    res.render("500", { message: `I'm sorry, but we have encountered the following error: ${err}` });
+  });
+});
+
+// get "/lego/deleteSet/:num" to delete a set
+app.get('/lego/deleteSet/:num', (req, res) => {
+  const setNum = req.params.num;
+
+  legoData.deleteSet(setNum).then(() => {
+    res.redirect('/lego/sets');
+  }).catch((err) => {
+    res.render("500", { message: `I'm sorry, but we have encountered the following error: ${err}` });
   });
 });
 

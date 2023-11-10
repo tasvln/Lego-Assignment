@@ -14,68 +14,6 @@
 require('dotenv').config();
 const Sequelize = require('sequelize');
 
-const initialize = () => {
-  return sequelize.sync()
-    .then((res) => {
-      console.log(res);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-
-const getAllSets = () => {
-  // return promise of sets
-  const sets = Set.findAll({ include: [Theme] });
-  return sets;
-};
-
-const getSetByNum = (setNum) => {
-  // find set by setNum
-  const set = Set.findAll({
-    include: [Theme],
-    where: { 
-      set_num: setNum 
-    },
-  }).then((sets) => {
-    // check if set exists
-    if (sets.length > 0) {
-      return sets[0];
-    } else {
-      throw new Error('Unable to find requested set');
-    }
-  });
-
-  return set;
-};
-
-const getSetsByTheme = (theme) => {
-  const sets = Set.findAll({
-    include: [Theme],
-    where: {
-      '$Theme.name$': {
-        [Sequelize.Op.iLike]: `%${theme}%`,
-      },
-    },
-  }).then((sets) => {
-    // check if sets exists
-    if (sets.length > 0) {
-      return sets;
-    } else {
-      throw new Error('Unable to find requested sets');
-    }
-  });
-
-  return sets;
-};
-
-module.exports = { 
-  initialize, 
-  getAllSets, 
-  getSetByNum, 
-  getSetsByTheme 
-}
-
 // initialize sequelize
 let db = process.env.PGDATABASE;
 let host = process.env.PGHOST;
@@ -123,3 +61,154 @@ const Set = sequelize.define('Set', {
 });
 
 Set.belongsTo(Theme, { foreignKey: 'theme_id' });
+
+// initialize database
+const initialize = () => {
+  return new Promise((resolve, reject) => {
+    sequelize
+      .sync()
+      .then(() => {
+        console.log('Connection has been established successfully.');
+        resolve();
+      })
+      .catch((err) => {
+        console.log('Unable to connect to the database:', err);
+        reject();
+      });
+  });
+};
+
+// get all sets
+const getAllSets = () => {
+  return new Promise((resolve, reject) => {
+    Set.findAll({
+      include: [Theme],
+    })
+      .then((data) => {
+        resolve(data);
+      })
+      .catch((err) => {
+        reject(err.errors[0].message);
+      });
+  });
+};
+
+// get set by setNum
+const getSetByNum = (setNum) => {
+  return new Promise((resolve, reject) => {
+    Set.findAll({
+      include: [Theme],
+      where: {
+        set_num: setNum,
+      },
+    })
+      .then((data) => {
+        if (data.length > 0) {
+          resolve(data[0]);
+        } else {
+          reject('Unable to find requested set');
+        }
+      })
+      .catch((err) => {
+        reject(err.errors[0].message);
+      });
+  });
+};
+
+// get sets by theme
+const getSetsByTheme = (theme) => {
+  return new Promise((resolve, reject) => {
+    Theme.findAll({
+      include: [Theme],
+      where: {
+        '$Theme.name$': {
+          [Sequelize.Op.iLike]: `%${theme}%`,
+        },
+      },
+    })
+      .then((data) => {
+        if (data.length > 0) {
+          resolve(data);
+        } else {
+          reject('Unable to find requested theme');
+        }
+      })
+      .catch((err) => {
+        reject(err.errors[0].message);
+      });
+  });
+};
+
+// add a set
+const addSet = (setData) => {
+  return new Promise((resolve, reject) => {
+    Set.create(setData)
+      .then(() => {
+        resolve();
+      })
+      .catch((err) => {
+        reject(err.errors[0].message);
+      });
+  });
+};
+
+// get all themes
+const getAllThemes = () => {
+  return new Promise((resolve, reject) => {
+    Theme.findAll()
+      .then((data) => {
+        resolve(data);
+      })
+      .catch((err) => {
+        reject(err.errors[0].message);
+      });
+  });
+};
+
+// edit a set
+const editSet = (setData) => {
+  return new Promise((resolve, reject) => {
+    Set.update(setData,
+      { 
+        where: { 
+          set_num: setData.set_num 
+        } 
+      }
+    )
+      .then(() => {
+        resolve();
+      })
+      .catch((err) => {
+        reject(err.errors[0].message);
+      });
+  });
+};
+
+// delete a set
+const deleteSet = (setNum) => {
+  return new Promise((resolve, reject) => {
+    Set.destroy({
+      where: {
+        set_num: setNum,
+      },
+    })
+      .then(() => {
+        resolve();
+      })
+      .catch((err) => {
+        reject(err.errors[0].message);
+      });
+  });
+}
+
+
+module.exports = { 
+  initialize, 
+  getAllSets, 
+  getSetByNum, 
+  getSetsByTheme,
+  addSet,
+  getAllThemes,
+  editSet,
+  deleteSet
+}
