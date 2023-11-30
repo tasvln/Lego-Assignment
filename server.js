@@ -26,7 +26,7 @@ app.use(express.static('public'));
 app.use(
   clientSessions({
     cookieName: 'session',
-    secret: 'DhNay7wgoHmRsz0AyLVtFdMDqSrJTaMr',
+    secret: process.env.SESSION_KEY,
     duration: 2 * 60 * 1000,
     activeDuration: 1000 * 60,
   })
