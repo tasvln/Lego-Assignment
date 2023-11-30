@@ -45,7 +45,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 
 // set port
-const HTTP_PORT = process.env.PORT || 3000;
+const HTTP_PORT = process.env.PORT || 8080;
 
 // middleware to ensure user is logged in
 function ensureLogin(req, res, next) {
