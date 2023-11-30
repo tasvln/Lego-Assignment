@@ -1,12 +1,14 @@
 /********************************************************************************
-* WEB322 – Assignment 02
+* WEB322 – Assignment 06
 *
 * I declare that this assignment is my own work in accordance with Seneca's
 * Academic Integrity Policy:
 *
 * https://www.senecacollege.ca/about/policies/academic-integrity-policy.html
 *
-* Name: Temitope Adebayo Student Student ID: 144000205 Date: 2023-09-26
+* Name: Temitope Adebayo Student Student ID: 144000205 Date: 2023-11-30
+*
+* Published URL: https://curious-fedora-toad.cyclic.cloud/
 *
 ********************************************************************************/
 
